@@ -1,0 +1,1384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lyriem | A Freelance Marketplace with No Platform Fees</title>
+<meta name="description" content="Lyriem is the Upwork alternative. A freelance marketplace with no platform fees, escrow protection, and verified portable reputation. Hire freelancers.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;0,9..40,900;1,9..40,400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy:        #353c50;
+    --navy-dark:   #272d3e;
+    --navy-light:  #404859;
+    --orange:      #f6946b;
+    --orange-light:#f9ab88;
+    --yellow:      #d4e022;
+    --white:       #ffffff;
+    --text-muted:  rgba(255,255,255,0.55);
+    --card-bg:     rgba(255,255,255,0.05);
+    --card-border: rgba(255,255,255,0.09);
+  }
+
+  html, body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--navy-dark);
+    color: var(--white);
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+  }
+
+  /* ══════════════════════════════════════════════════
+     HERO
+  ══════════════════════════════════════════════════ */
+  .hero {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: linear-gradient(to top right, #353c50 0%, #2a3044 28%, #161b28 100%);
+  }
+
+  .portrait-zone {
+    position: absolute;
+    top: 0; right: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    overflow: hidden;
+  }
+
+  .portrait-slide {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 1.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .portrait-slide.active { opacity: 1; }
+
+  .portrait-slide img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    object-position: center;
+    filter: grayscale(1) brightness(0.78) contrast(1.05);
+    display: block;
+  }
+
+  .portrait-vignette {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    background: radial-gradient(ellipse 50% 60% at 72% 36%, transparent 20%, rgba(8,10,20,0.4) 60%, rgba(8,10,20,0.88) 100%);
+  }
+
+  .portrait-glow {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 65%;
+    z-index: 3;
+    pointer-events: none;
+    background: radial-gradient(ellipse 70% 70% at 50% 100%, var(--orange) 0%, rgba(246,148,107,0.55) 22%, rgba(246,148,107,0.2) 45%, transparent 70%);
+    opacity: 0.45;
+  }
+
+  .texture-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 4;
+    pointer-events: none;
+    background-image: repeating-linear-gradient(45deg, transparent, transparent 9px, rgba(255,255,255,0.055) 9px, rgba(255,255,255,0.055) 11px);
+  }
+
+  .portrait-row { position: contents; }
+  .texture-portrait { display: none; }
+
+  /* ── NAV ─────────────────────────────────────────── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    background: #272d3e;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 32px;
+    padding: 0 48px;
+    height: 56px;
+    flex-shrink: 0;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  nav a { color: var(--white); text-decoration: none; opacity: 0.82; transition: opacity 0.2s; }
+  nav a:hover { opacity: 1; }
+  .nav-already { opacity: 0.5; font-weight: 400; text-transform: none; letter-spacing: 0; font-size: 13px; }
+  .nav-signin  { color: var(--yellow) !important; opacity: 1 !important; font-weight: 700; }
+  .nav-logo-mobile { display: none; }
+
+  /* ── HERO CONTENT ────────────────────────────────── */
+  .hero-content {
+    position: relative;
+    z-index: 8;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 48px 64px 140px;
+    max-width: 780px;
+    margin-top: 56px;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    margin-bottom: 36px;
+    margin-left: -40px;
+    animation: fadeUp 0.6s ease both;
+  }
+  .logo svg { width: 340px !important; height: auto !important; display: block; }
+
+  .headline {
+    font-weight: 900;
+    font-size: clamp(46px, 5.6vw, 74px);
+    line-height: 0.96;
+    text-transform: uppercase;
+    color: var(--yellow);
+    margin-bottom: 22px;
+    letter-spacing: -0.02em;
+    animation: fadeUp 0.6s 0.08s ease both;
+  }
+
+  .subhead {
+    font-weight: 700;
+    font-size: clamp(12px, 1.3vw, 15px);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--orange);
+    line-height: 1.6;
+    animation: fadeUp 0.6s 0.16s ease both;
+  }
+
+  /* ── CTA ─────────────────────────────────────────── */
+  .cta-zone {
+    position: absolute;
+    bottom: 52px; left: 0; right: 0;
+    z-index: 8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fadeUp 0.6s 0.28s ease both;
+  }
+
+  .cta-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--orange);
+    color: #1a1a1a;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 800;
+    font-size: 15px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    text-decoration: none;
+    padding: 20px 72px;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+  }
+  .cta-btn:hover { background: var(--orange-light); transform: translateY(-2px); }
+
+  /* ── FEATURED MAKER (desktop) ────────────────────── */
+  .featured-maker {
+    position: absolute;
+    right: 52px; bottom: 100px;
+    z-index: 8;
+    width: 280px;
+    animation: fadeUp 0.6s 0.36s ease both;
+  }
+
+  /* thin orange rule above the card */
+  .featured-rule {
+    width: 100%;
+    height: 2px;
+    background: var(--orange);
+    opacity: 0.6;
+    margin-bottom: 14px;
+  }
+
+  .featured-label {
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--orange); margin-bottom: 8px;
+    transition: opacity 0.45s ease;
+  }
+  .featured-label span { color: var(--yellow); }
+
+  /* maker name — larger, prominent */
+  .maker-name {
+    font-size: 16px; font-weight: 800;
+    color: var(--white); letter-spacing: -0.01em;
+    margin-bottom: 6px;
+    transition: opacity 0.45s ease;
+  }
+
+  /* discipline + experience line */
+  .maker-role {
+    font-size: 12px; font-weight: 500;
+    color: var(--yellow); opacity: 0.9;
+    margin-bottom: 4px;
+    transition: opacity 0.45s ease;
+  }
+
+  /* location + timezone */
+  .maker-location {
+    font-size: 12px; font-weight: 400;
+    color: rgba(255,255,255,0.55);
+    display: flex; align-items: center; gap: 5px;
+    margin-bottom: 14px;
+    transition: opacity 0.45s ease;
+  }
+  .maker-location svg { flex-shrink: 0; opacity: 0.6; }
+
+  .featured-maker.fading .featured-label,
+  .featured-maker.fading .maker-name,
+  .featured-maker.fading .maker-role,
+  .featured-maker.fading .maker-location,
+  .featured-maker.fading .featured-maker-text,
+  .featured-maker.fading .view-link { opacity: 0 !important; }
+
+  /* CTA link — "View Profile" */
+  .view-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--white);
+    text-decoration: none;
+    opacity: 0.7;
+    transition: opacity 0.2s, gap 0.2s;
+  }
+  .view-link:hover { opacity: 1; gap: 9px; }
+  .view-link svg { flex-shrink: 0; }
+
+  /* ── CAROUSEL CONTROLS ────────────────────────────── */
+  .carousel-controls {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    margin-top: 14px;
+  }
+  .ctrl-btn, .ctrl-pause {
+    display: flex; align-items: center; justify-content: center;
+    width: 26px; height: 26px;
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.16);
+    color: var(--white); cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+    flex-shrink: 0; padding: 0;
+  }
+  .ctrl-btn:hover, .ctrl-pause:hover { background: rgba(255,255,255,0.14); border-color: rgba(255,255,255,0.32); }
+  .ctrl-pause.paused { border-color: var(--yellow); color: var(--yellow); }
+  .carousel-dots { display: flex; align-items: center; gap: 6px; flex: 1; }
+  .dot {
+    height: 3px; width: 18px;
+    background: rgba(255,255,255,0.22);
+    cursor: pointer; border: none; padding: 0;
+    transition: background 0.3s, width 0.3s;
+    position: relative; overflow: hidden;
+  }
+  .dot.active { background: var(--yellow); width: 28px; }
+  .dot-progress::after {
+    content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+    width: 0%; background: rgba(255,255,255,0.45);
+    transition: width 0s linear;
+  }
+  .dot-progress.running::after { width: 100%; transition: width 5s linear; }
+
+  /* ══════════════════════════════════════════════════
+     SHARED SECTION STYLES
+  ══════════════════════════════════════════════════ */
+  .section-eyebrow {
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--orange); margin-bottom: 16px;
+  }
+  .section-title {
+    font-weight: 900;
+    font-size: clamp(32px, 4vw, 52px);
+    line-height: 1.0; letter-spacing: -0.02em;
+    margin-bottom: 16px;
+  }
+  .section-title em { font-style: italic; color: var(--orange); }
+  .section-subtitle {
+    font-size: 16px; color: var(--text-muted);
+    line-height: 1.65; max-width: 520px;
+  }
+
+  /* ══════════════════════════════════════════════════
+     SECTION 1 — WHAT MAKES LYRIEM DIFFERENT
+  ══════════════════════════════════════════════════ */
+  .broken-section {
+    background: var(--navy-dark);
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+  .broken-inner {
+    padding: 100px 64px;
+    max-width: 1100px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  .broken-inner .section-title { margin-bottom: 12px; }
+  .broken-inner .section-subtitle { margin: 0 auto 64px; text-align: center; max-width: 520px; }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    text-align: left;
+  }
+  .feature-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    padding: 36px 32px;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .feature-card:hover {
+    border-color: rgba(246,148,107,0.3);
+    background: rgba(246,148,107,0.04);
+  }
+  .feature-icon { width: 40px; height: 40px; margin-bottom: 24px; color: var(--orange); }
+  .feature-card h3 { font-weight: 700; font-size: 18px; margin-bottom: 12px; letter-spacing: -0.01em; }
+  .feature-card p  { font-size: 14px; color: var(--text-muted); line-height: 1.7; }
+
+  /* ══════════════════════════════════════════════════
+     SECTION 2 — HOW IT WORKS (white)
+  ══════════════════════════════════════════════════ */
+  .how-section { background: #ffffff; color: var(--navy-dark); }
+  .how-section .section-eyebrow { color: var(--orange); }
+  .how-section .section-title   { color: var(--navy-dark); }
+  .how-inner { padding: 100px 64px; max-width: 1100px; margin: 0 auto; }
+
+  .steps-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+    margin-top: 56px;
+  }
+  .step-card {
+    background: #f5f5f7;
+    border: 1px solid rgba(53,60,80,0.1);
+    padding: 32px 28px;
+    position: relative;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .step-card:hover { border-color: rgba(246,148,107,0.4); box-shadow: 0 4px 24px rgba(246,148,107,0.1); }
+  .step-number {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 36px; height: 36px; background: var(--orange);
+    color: #1a1a1a; font-weight: 900; font-size: 16px;
+    margin-bottom: 20px; border-radius: 50%;
+  }
+  .step-card h3 { font-weight: 700; font-size: 17px; margin-bottom: 10px; letter-spacing: -0.01em; color: var(--navy-dark); }
+  .step-card p  { font-size: 14px; color: rgba(39,45,62,0.65); line-height: 1.7; }
+  .steps-grid .step-card:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    top: 54px; right: -13px;
+    width: 24px; height: 1px;
+    background: rgba(53,60,80,0.15);
+  }
+
+  /* ══════════════════════════════════════════════════
+     SECTION 3 — CALCULATOR (light)
+  ══════════════════════════════════════════════════ */
+  .calc-section { background: #f5f5f7; border-top: 1px solid rgba(53,60,80,0.08); }
+  .calc-section .section-eyebrow  { color: var(--orange); }
+  .calc-section .section-title    { color: var(--navy-dark); }
+  .calc-section .section-subtitle { color: rgba(39,45,62,0.65); }
+  .calc-left .bullet-item        { color: rgba(39,45,62,0.65); }
+  .calc-left .bullet-item span   { color: rgba(39,45,62,0.65); }
+  .calc-left .bullet-item strong { color: var(--navy-dark); }
+
+  .calc-inner {
+    padding: 100px 64px; max-width: 1100px; margin: 0 auto;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start;
+  }
+  .calc-left .bullet-list { margin-top: 32px; display: flex; flex-direction: column; gap: 14px; }
+  .calc-left .bullet-item {
+    display: flex; gap: 12px; font-size: 14px; line-height: 1.6;
+    color: rgba(39,45,62,0.65);
+  }
+  .bullet-dot { width: 8px; height: 8px; border-radius: 50%; margin-top: 7px; flex-shrink: 0; }
+  .bullet-dot.fiverr     { background: #e74c3c; }
+  .bullet-dot.upwork     { background: #27ae60; }
+  .bullet-dot.freelancer { background: #3498db; }
+  .bullet-dot.lyriem     { background: var(--yellow); }
+  .bullet-item strong { color: var(--navy-dark); }
+
+  .calc-widget { background: #ffffff; border: 1px solid rgba(53,60,80,0.12); padding: 36px; box-shadow: 0 4px 32px rgba(53,60,80,0.08); }
+  .calc-widget-label { font-size: 10px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(39,45,62,0.45); margin-bottom: 20px; }
+  .calc-tabs { display: flex; border: 1px solid rgba(53,60,80,0.15); margin-bottom: 24px; }
+  .calc-tab {
+    flex: 1; padding: 10px; font-size: 13px; font-weight: 600; text-align: center;
+    cursor: pointer; color: rgba(39,45,62,0.45); background: transparent; border: none;
+    font-family: 'DM Sans', sans-serif; transition: background 0.2s, color 0.2s;
+  }
+  .calc-tab.active { background: var(--navy-dark); color: var(--white); }
+  .calc-input-wrap {
+    display: flex; align-items: center;
+    border: 1px solid rgba(53,60,80,0.15); background: #f5f5f7;
+    padding: 0 20px; margin-bottom: 28px; height: 60px;
+  }
+  .calc-dollar { font-size: 22px; font-weight: 300; color: rgba(39,45,62,0.4); margin-right: 8px; }
+  .calc-input {
+    flex: 1; background: transparent; border: none; outline: none;
+    font-family: 'DM Sans', sans-serif; font-size: 28px; font-weight: 700; color: var(--navy-dark); width: 100%;
+  }
+  .calc-platform-label { font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(39,45,62,0.45); margin-bottom: 14px; }
+  .platform-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 28px; }
+  .platform-chip {
+    padding: 6px 14px; border: 1px solid rgba(53,60,80,0.18);
+    font-size: 12px; font-weight: 600; color: rgba(39,45,62,0.55);
+    cursor: pointer; background: transparent; font-family: 'DM Sans', sans-serif;
+    transition: all 0.15s; white-space: nowrap;
+  }
+  .platform-chip.active { border-color: var(--orange); color: var(--orange); background: rgba(246,148,107,0.08); }
+
+  .calc-results { display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; }
+  .result-row { display: flex; align-items: center; gap: 12px; }
+  .result-label { font-size: 13px; font-weight: 600; width: 90px; flex-shrink: 0; color: rgba(39,45,62,0.55); }
+  .result-bar-wrap { flex: 1; height: 4px; background: rgba(53,60,80,0.1); position: relative; overflow: hidden; }
+  .result-bar { height: 100%; transition: width 0.6s cubic-bezier(0.4,0,0.2,1); }
+  .result-bar.platform-bar { background: #e74c3c; }
+  .result-bar.lyriem-bar   { background: var(--yellow); }
+  .result-value { font-size: 13px; font-weight: 700; width: 100px; text-align: right; flex-shrink: 0; }
+  .result-value.negative { color: #e74c3c; }
+  .result-value.positive  { color: #6a7a00; }
+
+  .calc-summary { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .summary-card { background: #f5f5f7; border: 1px solid rgba(53,60,80,0.1); padding: 20px; }
+  .summary-card .summary-label { font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(39,45,62,0.45); margin-bottom: 8px; }
+  .summary-card .summary-value { font-size: 26px; font-weight: 900; letter-spacing: -0.02em; color: var(--orange); }
+
+  /* ══════════════════════════════════════════════════
+     SECTION 4 — WHY IT'S FREE (dark)
+  ══════════════════════════════════════════════════ */
+  .free-section {
+    background: var(--navy-dark);
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+  .free-inner {
+    padding: 100px 64px; max-width: 1100px; margin: 0 auto;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center;
+  }
+  .free-inner h2 { font-weight: 900; font-size: clamp(28px, 3.5vw, 44px); line-height: 1.1; letter-spacing: -0.02em; margin-bottom: 20px; }
+  .free-inner p  { font-size: 16px; color: var(--text-muted); line-height: 1.7; margin-bottom: 16px; }
+  .free-inner p:last-child { margin-bottom: 0; }
+  .free-inner .section-eyebrow { margin-bottom: 16px; }
+  .free-highlight {
+    background: var(--card-bg); border: 1px solid var(--card-border);
+    padding: 32px; display: flex; flex-direction: column; gap: 20px;
+  }
+  .free-highlight-item { display: flex; gap: 16px; align-items: flex-start; }
+  .free-highlight-icon {
+    width: 36px; height: 36px; flex-shrink: 0;
+    background: rgba(246,148,107,0.12);
+    border: 1px solid rgba(246,148,107,0.2);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--orange);
+  }
+  .free-highlight-text h4 { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+  .free-highlight-text p  { font-size: 13px; color: var(--text-muted); line-height: 1.6; margin: 0; }
+
+  /* ══════════════════════════════════════════════════
+     SECTION 5 — FAQ (dark)
+  ══════════════════════════════════════════════════ */
+  .faq-section {
+    background: var(--navy);
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+  .faq-inner {
+    padding: 100px 64px; max-width: 800px; margin: 0 auto;
+  }
+  .faq-inner .section-title { text-align: center; margin-bottom: 56px; }
+
+  .faq-item {
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .faq-question {
+    width: 100%; background: none; border: none; color: var(--white);
+    font-family: 'DM Sans', sans-serif; font-size: 16px; font-weight: 600;
+    text-align: left; padding: 24px 0; cursor: pointer;
+    display: flex; justify-content: space-between; align-items: center;
+    gap: 16px; transition: color 0.2s;
+  }
+  .faq-question:hover { color: var(--yellow); }
+  .faq-question svg { flex-shrink: 0; transition: transform 0.3s; }
+  .faq-item.open .faq-question { color: var(--yellow); }
+  .faq-item.open .faq-question svg { transform: rotate(45deg); }
+  .faq-answer {
+    font-size: 15px; color: var(--text-muted); line-height: 1.7;
+    max-height: 0; overflow: hidden; transition: max-height 0.4s ease, padding 0.3s ease;
+    padding-bottom: 0;
+  }
+  .faq-item.open .faq-answer { max-height: 400px; padding-bottom: 24px; }
+
+  /* ══════════════════════════════════════════════════
+     FOOTER CTA
+  ══════════════════════════════════════════════════ */
+  .footer-cta {
+    background: radial-gradient(ellipse 60% 80% at 50% 100%, rgba(246,148,107,0.18) 0%, transparent 70%), var(--navy);
+    border-top: 1px solid rgba(255,255,255,0.06);
+    position: relative; overflow: hidden;
+  }
+  .footer-cta-inner {
+    position: relative; z-index: 2;
+    padding: 120px 64px; max-width: 700px; margin: 0 auto; text-align: center;
+  }
+  .footer-cta-inner .section-title { font-size: clamp(36px, 5vw, 62px); margin-bottom: 20px; }
+  .footer-cta-inner .section-subtitle {
+    font-size: 18px; font-style: italic;
+    max-width: 460px; margin: 0 auto 16px; text-align: center;
+    color: var(--text-muted);
+  }
+  .footer-cta-inner .footer-tagline {
+    font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--orange); margin-bottom: 40px;
+  }
+
+  .site-footer {
+    background: var(--navy-dark);
+    border-top: 1px solid rgba(255,255,255,0.06);
+    padding: 32px 64px;
+    display: flex; align-items: center; justify-content: space-between;
+    font-size: 12px; color: var(--text-muted);
+  }
+  .site-footer a { color: var(--text-muted); text-decoration: none; }
+  .site-footer a:hover { color: var(--white); }
+  .footer-links { display: flex; gap: 28px; }
+
+  /* ══════════════════════════════════════════════════
+     ANIMATIONS + REVEAL
+  ══════════════════════════════════════════════════ */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.65s ease, transform 0.65s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* ══════════════════════════════════════════════════
+     HAMBURGER + MOBILE DRAWER
+  ══════════════════════════════════════════════════ */
+  .nav-hamburger {
+    display: none; flex-direction: column; justify-content: center; gap: 5px;
+    width: 36px; height: 36px; background: none; border: none;
+    cursor: pointer; padding: 4px; margin-left: auto; flex-shrink: 0;
+  }
+  .nav-hamburger span { display: block; height: 2px; background: var(--white); border-radius: 2px; transition: transform 0.3s, opacity 0.3s; }
+  .nav-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .nav-hamburger.open span:nth-child(2) { opacity: 0; }
+  .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  .nav-drawer {
+    display: none; position: fixed;
+    top: 56px; left: 0; right: 0; background: #272d3e; z-index: 99;
+    flex-direction: column; padding: 24px 28px; gap: 0;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    box-shadow: 0 12px 32px rgba(0,0,0,0.4);
+  }
+  .nav-drawer.open { display: flex; }
+  .nav-drawer a, .nav-drawer .nav-already {
+    display: block; padding: 14px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    font-size: 14px; font-weight: 600; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--white); text-decoration: none; opacity: 0.85;
+  }
+  .nav-drawer .nav-already { font-size: 12px; font-weight: 400; text-transform: none; letter-spacing: 0; opacity: 0.5; padding-top: 20px; border-bottom: none; }
+  .nav-drawer .nav-signin  { color: var(--yellow) !important; opacity: 1 !important; border-bottom: none; padding-top: 4px; }
+
+  /* ══════════════════════════════════════════════════
+     MOBILE — ≤ 768px
+  ══════════════════════════════════════════════════ */
+  @media (max-width: 768px) {
+
+    nav { padding: 0 20px; justify-content: space-between; }
+    nav > a, nav > span { display: none; }
+    .nav-hamburger { display: flex; }
+
+    .hero { height: auto; min-height: unset; }
+
+    /* portrait strip */
+    .portrait-row {
+      display: block !important; position: relative !important;
+      width: 100%; height: 380px; flex-shrink: 0;
+      order: 3; overflow: hidden;
+    }
+    .portrait-zone  { position: absolute !important; inset: 0; width: 100% !important; height: 100% !important; }
+    .portrait-vignette {
+      position: absolute !important; inset: 0; width: 100% !important; height: 100% !important;
+      background:
+        linear-gradient(to bottom, var(--navy) 0%, transparent 20%, transparent 80%, var(--navy) 100%),
+        linear-gradient(to right, var(--navy) 0%, transparent 25%);
+    }
+    .portrait-glow {
+      position: absolute !important; inset: 0; height: 100% !important;
+      background: radial-gradient(ellipse 80% 60% at 50% 110%, var(--orange) 0%, rgba(246,148,107,0.4) 30%, transparent 70%);
+      opacity: 0.35;
+    }
+    .texture-portrait { display: block !important; }
+    .hero > .texture-overlay { z-index: 4; pointer-events: none; }
+
+    /* orange rule + drop shadow — delineates hero text from portrait strip */
+    .portrait-row::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: var(--orange);
+      opacity: 0.7;
+      z-index: 10;
+      box-shadow: 0 4px 20px 2px rgba(246,148,107,0.45), 0 2px 8px rgba(0,0,0,0.4);
+    }
+
+
+    /* ── FEATURED MAKER — full-width horizontal bar below portrait strip ── */
+    .featured-maker {
+      position: static !important;
+      right: auto !important; bottom: auto !important; left: auto !important;
+      width: 100% !important; max-width: 100% !important;
+      padding: 14px 20px !important;
+      background: var(--navy-dark) !important;
+      backdrop-filter: none !important; -webkit-backdrop-filter: none !important;
+      border: none !important;
+      border-top: 2px solid rgba(246,148,107,0.5) !important;
+      box-shadow: 0 -4px 20px rgba(246,148,107,0.15) !important;
+      order: 4 !important;
+      z-index: 8;
+      display: flex !important;
+      flex-direction: row !important;
+      align-items: center !important;
+      gap: 12px !important;
+    }
+    .featured-maker .featured-rule { display: none; }
+    .featured-maker .featured-label { font-size: 9px; margin-bottom: 2px; }
+    .maker-name     { font-size: 13px; font-weight: 800; margin-bottom: 1px; }
+    .maker-role     { font-size: 10px; margin-bottom: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .maker-location { font-size: 10px; margin-bottom: 0; }
+    .view-link      { display: inline-flex; font-size: 10px; margin-top: 6px; }
+
+    /* right side: controls only, no top margin */
+    .carousel-controls {
+      display: flex !important; flex-direction: row !important;
+      flex-wrap: nowrap !important; align-items: center !important;
+      gap: 6px !important; margin-top: 0 !important; flex-shrink: 0 !important;
+    }
+    .ctrl-btn, .ctrl-pause { width: 26px !important; height: 26px !important; }
+
+    /* wrap label+name+role+location in a flex column that takes remaining space */
+    .featured-maker-text { flex: 1; min-width: 0; }
+
+    /* hero content */
+    .hero-content { padding: 28px 24px 20px; max-width: 100%; justify-content: flex-start; flex: 0 0 auto; order: 1; }
+    .logo { margin-left: -18px; margin-bottom: 20px; }
+    .logo svg { width: 190px !important; }
+    .headline { font-size: clamp(36px, 10.5vw, 54px); margin-bottom: 16px; }
+    .subhead  { font-size: 12px; margin-bottom: 0; }
+
+    /* CTA — smaller, centered, not full width */
+    .cta-zone { position: static; padding: 20px 24px 0; order: 2; display: flex; justify-content: center; }
+    .cta-btn  { width: auto; padding: 16px 48px; font-size: 13px; }
+
+    /* sections */
+    .broken-inner, .how-inner, .footer-cta-inner, .faq-inner { padding: 64px 24px; }
+    .calc-inner  { padding: 64px 24px; grid-template-columns: 1fr; gap: 48px; }
+    .free-inner  { padding: 64px 24px; grid-template-columns: 1fr; gap: 40px; }
+    .features-grid, .steps-grid { grid-template-columns: 1fr; gap: 16px; }
+    .steps-grid .step-card::after { display: none; }
+    .section-title { font-size: clamp(28px, 8vw, 40px); }
+    .footer-cta-inner .section-title { font-size: clamp(28px, 9vw, 44px); }
+    .section-subtitle { font-size: 15px; }
+    .calc-widget { padding: 24px 20px; }
+    .calc-input  { font-size: 22px; }
+    .calc-summary { grid-template-columns: 1fr; gap: 12px; }
+    .result-value { width: 80px; font-size: 11px; }
+    .result-label { width: 72px; font-size: 11px; }
+    .site-footer  { flex-direction: column; gap: 16px; text-align: center; padding: 28px 24px; }
+  }
+
+  /* ── DESKTOP RESET ───────────────────────────────── */
+  @media (min-width: 769px) {
+    .portrait-row { display: contents; position: unset; height: unset; order: unset; }
+    .featured-maker {
+      position: absolute !important; right: 52px !important; bottom: 100px !important;
+      left: auto !important; width: 280px !important; max-width: 280px !important;
+      padding: 0 !important; background: transparent !important;
+      backdrop-filter: none !important; -webkit-backdrop-filter: none !important;
+      border: none !important; order: unset !important;
+    }
+    .featured-maker .featured-rule { display: block; }
+    .featured-maker .featured-label { font-size: 10px; margin-bottom: 8px; }
+    .maker-name     { font-size: 16px; margin-bottom: 6px; }
+    .maker-role     { font-size: 12px; margin-bottom: 4px; }
+    .maker-location { font-size: 12px; margin-bottom: 14px; }
+    .view-link      { font-size: 11px; }
+    .carousel-controls { display: flex !important; flex-direction: row !important; align-items: center !important; gap: 10px !important; margin-top: 14px !important; }
+    .ctrl-btn, .ctrl-pause { width: 26px !important; height: 26px !important; }
+    .hero { height: 100vh; min-height: unset; }
+    .hero-content { order: unset; padding: 48px 64px 140px; max-width: 780px; }
+    .cta-zone { position: absolute; bottom: 52px; left: 0; right: 0; padding: 0; order: unset; }
+    .cta-btn  { width: auto; padding: 20px 72px; font-size: 15px; }
+    .texture-portrait { display: none !important; }
+  }
+
+  /* ── TABLET ──────────────────────────────────────── */
+  @media (min-width: 769px) and (max-width: 1024px) {
+    nav { padding: 0 32px; gap: 20px; font-size: 11px; }
+    .nav-already { display: none; }
+    .hero-content { padding: 48px 48px 140px; max-width: 560px; }
+    .logo svg { width: 260px !important; }
+    .logo { margin-left: -28px; }
+    .broken-inner, .how-inner { padding: 80px 48px; }
+    .calc-inner, .free-inner  { padding: 80px 48px; gap: 48px; }
+    .footer-cta-inner, .faq-inner { padding: 80px 48px; }
+    .site-footer { padding: 28px 48px; }
+    .features-grid { grid-template-columns: repeat(2, 1fr); }
+    .steps-grid    { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  @media (max-width: 390px) {
+    .headline { font-size: 34px; }
+    .logo svg { width: 170px !important; }
+    .platform-chip { font-size: 11px; padding: 5px 10px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <svg class="nav-logo-mobile" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 120" style="height:28px;width:auto">
+    <polygon points="30,4 52,32 8,32" fill="#d4e022"/>
+    <polygon points="30,116 52,88 8,88" fill="#f6946b"/>
+  </svg>
+  <a href="#">Home</a>
+  <a href="#about">About</a>
+  <a href="#makers">For Makers</a>
+  <a href="#initiators">For Initiators</a>
+  <a href="#how">How It Works</a>
+  <span class="nav-already">Already have an account?</span>
+  <a href="#" class="nav-signin">Sign In</a>
+  <button class="nav-hamburger" id="navHamburger" aria-label="Open menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<div class="nav-drawer" id="navDrawer">
+  <a href="#" onclick="closeNav()">Home</a>
+  <a href="#about" onclick="closeNav()">About</a>
+  <a href="#makers" onclick="closeNav()">For Makers</a>
+  <a href="#initiators" onclick="closeNav()">For Initiators</a>
+  <a href="#how" onclick="closeNav()">How It Works</a>
+  <span class="nav-already">Already have an account?</span>
+  <a href="#" class="nav-signin" onclick="closeNav()">Sign In</a>
+</div>
+
+<!-- HERO -->
+<section class="hero" id="hero">
+  <div class="texture-overlay"></div>
+
+  <div class="portrait-row">
+    <div class="portrait-zone" id="portraitZone">
+      <div class="portrait-slide active"><img src="hero-bg.jpg" alt=""></div>
+    </div>
+    <div class="portrait-vignette"></div>
+    <div class="portrait-glow"></div>
+    <div class="texture-overlay texture-portrait"></div>
+  </div>
+
+  <!-- Featured maker carousel — commented out
+  <div class="featured-maker" id="featuredMaker">
+    <div class="featured-rule"></div>
+    <div class="featured-maker-text">
+      <p class="featured-label">Featured Maker: <span id="makerName"></span></p>
+      <p class="maker-name" id="makerFullName"></p>
+      <p class="maker-role" id="makerRole"></p>
+      <p class="maker-location">
+        <svg width="10" height="12" viewBox="0 0 10 12" fill="none">
+          <path d="M5 0C2.79 0 1 1.79 1 4c0 3 4 8 4 8s4-5 4-8c0-2.21-1.79-4-4-4zm0 5.5C4.17 5.5 3.5 4.83 3.5 4S4.17 2.5 5 2.5 6.5 3.17 6.5 4 5.83 5.5 5 5.5z" fill="currentColor"/>
+        </svg>
+        <span id="makerLocation"></span>
+      </p>
+      <a href="#" class="view-link" id="viewLink">
+        View Profile
+        <svg width="12" height="10" viewBox="0 0 12 10" fill="none">
+          <path d="M1 5h10M7 1l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+    </div>
+    <div class="carousel-controls">
+      <button class="ctrl-btn" id="btnPrev" aria-label="Previous maker">
+        <svg width="9" height="11" viewBox="0 0 9 11" fill="none"><path d="M7 1L2 5.5L7 10" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="carousel-dots" id="carouselDots"></div>
+      <button class="ctrl-btn" id="btnNext" aria-label="Next maker">
+        <svg width="9" height="11" viewBox="0 0 9 11" fill="none"><path d="M2 1L7 5.5L2 10" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <button class="ctrl-pause" id="btnPause" aria-label="Pause">
+        <svg id="iconPause" width="10" height="11" viewBox="0 0 10 11" fill="currentColor"><rect x="1" y="1" width="3" height="9" rx="0.5"/><rect x="6" y="1" width="3" height="9" rx="0.5"/></svg>
+        <svg id="iconPlay" width="10" height="11" viewBox="0 0 10 11" fill="currentColor" style="display:none"><path d="M1 1L9 5.5L1 10V1Z"/></svg>
+      </button>
+    </div>
+  </div>
+  -->
+
+
+  <div class="hero-content">
+    <div class="logo">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 513.96 256">
+        <defs><style>.c1{fill:#f7976b}.c2{fill:#fff}.c3{fill:#ebea66}</style></defs>
+        <g>
+          <path class="c2" d="M74.37,205.88v-75.43h-13.51v79.18c0,5.39,4.37,9.76,9.76,9.76h49.36v-13.51h-45.61Z"/>
+          <path class="c2" d="M309.25,116.42h3.75c5.38,0,9.76,4.37,9.76,9.76v31.82h-13.51v-41.58h0Z" transform="translate(178.8 453.21) rotate(-90)"/>
+          <rect class="c2" x="309.25" y="152.88" width="13.51" height="41.58" transform="translate(142.33 489.67) rotate(-90)"/>
+          <path class="c2" d="M149.38,150.7h-.2s-6-20.25-29-20.25v12.54c17.87,0,21.83,23.87,22.44,28.62v47.78h13.51v-49.13c1.08-6.81,5.7-27.27,22.24-27.27v-12.54c-23,0-29,20.25-29,20.25Z"/>
+          <path class="c2" d="M259.44,131.4v74.73c0,.94-.76,1.7-1.7,1.7h-18.49c-.4,0-.78-.17-1.05-.47l-22.08-25.98s-.39-.85.41-.85h4.81c9.63,0,17.44-7.81,17.44-17.44v-13.02c0-9.63-7.81-17.44-17.44-17.44h-20.11v11.01h17.26c5.2,0,9.42,4.22,9.42,9.42v7.03c0,5.2-4.22,9.42-9.42,9.42h-10.77c-8.47,0-9.75,9.46-2.82,16.39,2.4,2.4,23.61,25.81,29.13,32.03.83.94,2.01,1.45,3.27,1.45h25.9c5.39,0,9.76-4.37,9.76-9.76v-78.23h-13.51Z"/>
+          <path class="c2" d="M432.02,131.27c-20.39.42-21.07,18.34-21.07,18.34h0v12.46s1.01,6.49-5.38,6.49c-.08,0-.13-.03-.2-.03-.08,0-.13.03-.2.03-6.39,0-5.38-6.49-5.38-6.49v-12.46h0s-.68-17.92-21.07-18.34c-20.39.42-21.07,16.39-21.07,18.34v54.01c0,1.24-1.01,2.25-2.25,2.25h-60.19v3.75c0,5.39,4.37,9.76,9.76,9.76h52.25c6.93,0,12.54-5.62,12.54-12.54v-.97l.05-56.26c0-4.3,3.64-7.45,8.91-7.45s8.91,3.18,8.91,7.45c0,0,.05,12.2.05,16.09,0,4.31,2.17,14.49,17.69,14.49s17.69-10.18,17.69-14.49c0-3.89.05-16.09.05-16.09,0-4.26,3.64-7.45,8.91-7.45s8.91,3.14,8.91,7.45l.05,69.77h12.11v-69.77c0-1.95-.68-17.92-21.07-18.34Z"/>
+        </g>
+        <g>
+          <path class="c3" d="M277.88,84.84l10.17,7.02s-16.51-45.79-18.83-51.35c-1.94-4.66-7.35-5.48-10.77-.57-.69.99-15.46,21.25-15.46,21.25l9.11,6.2,9.85-13.81,15.94,31.27Z"/>
+          <path class="c1" d="M250.57,72.5l-9.67-6.54s17.18,46.1,19.5,51.66c1.94,4.66,7.35,5.48,10.77.57.69-.99,14.7-21.75,14.7-21.75l-9.44-6.16-10.12,12.54-15.74-30.33Z"/>
+        </g>
+      </svg>
+    </div>
+    <h1 class="headline">The "No<br>Platform Fee"<br>Freelance<br>Marketplace</h1>
+    <p class="subhead">Keep what you earn. Own your reputation.<br>Protected by escrow.</p>
+  </div>
+
+  <div class="cta-zone">
+    <a href="#join" class="cta-btn">Join Lyriem Free</a>
+  </div>
+</section>
+
+<!-- SECTION 1 — WHAT MAKES LYRIEM DIFFERENT -->
+<section class="broken-section" id="about">
+  <div class="broken-inner">
+    <h2 class="section-title reveal">What Makes Lyriem Different</h2>
+    <p class="section-subtitle reveal">Lyriem is a freelance platform built by the freelance community. Designed with Makers and Initiators at the center of everything we do.</p>
+    <div class="features-grid">
+      <div class="feature-card reveal">
+        <svg class="feature-icon" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.8">
+          <circle cx="20" cy="20" r="16"/>
+          <path d="M14 20h12" stroke-linecap="round"/>
+          <path d="M20 26v-12" stroke-linecap="round" opacity="0.4"/>
+        </svg>
+        <h3>0% Platform Fees</h3>
+        <p>Keep 100% of your earnings. Zero commission, zero hidden costs. Unlike competitors who take 20%+, you keep every penny you earn.</p>
+      </div>
+      <div class="feature-card reveal">
+        <svg class="feature-icon" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M20 6l12 6v10c0 6-5 11-12 14C13 33 8 28 8 22V12l12-6z" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M15 20l3.5 3.5L25 17" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <h3>Escrow-Secured Payments</h3>
+        <p>Funds are locked securely before work begins and released automatically upon approval. No ghosting, no unpaid invoices.</p>
+      </div>
+      <div class="feature-card reveal">
+        <svg class="feature-icon" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.8">
+          <circle cx="20" cy="14" r="6" stroke-linecap="round"/>
+          <path d="M8 34c0-6.627 5.373-12 12-12s12 5.373 12 12" stroke-linecap="round"/>
+          <path d="M28 18l3 3-3 3" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <h3>On-Chain Reputation</h3>
+        <p>Build a permanent, verifiable track record that follows you everywhere. Your reputation is portable, permanent, and truly yours.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 2 — FOR MAKERS + INITIATORS -->
+<section class="how-section" id="makers">
+  <div class="how-inner">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:64px;margin-bottom:80px" class="reveal">
+      <div>
+        <p class="section-eyebrow">For Makers</p>
+        <h2 class="section-title" style="font-size:clamp(26px,3vw,38px)">You built your career.<br>Stop paying rent to platforms.</h2>
+        <p style="font-size:15px;color:rgba(39,45,62,0.65);line-height:1.7;margin-bottom:24px">If you've ever chased an unpaid invoice or watched a platform skim 20%+, Lyriem was built for you.</p>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:12px">
+          <li style="font-size:14px;color:rgba(39,45,62,0.75);display:flex;gap:10px;align-items:flex-start"><span style="color:#f6946b;font-weight:700;flex-shrink:0">→</span><span><strong style="color:#272d3e">Zero platform fees</strong> — keep every dollar you earn</span></li>
+          <li style="font-size:14px;color:rgba(39,45,62,0.75);display:flex;gap:10px;align-items:flex-start"><span style="color:#f6946b;font-weight:700;flex-shrink:0">→</span><span><strong style="color:#272d3e">Escrow protection</strong> — get paid for the work you do</span></li>
+          <li style="font-size:14px;color:rgba(39,45,62,0.75);display:flex;gap:10px;align-items:flex-start"><span style="color:#f6946b;font-weight:700;flex-shrink:0">→</span><span><strong style="color:#272d3e">Portable reputation</strong> — own your reviews forever</span></li>
+          <li style="font-size:14px;color:rgba(39,45,62,0.75);display:flex;gap:10px;align-items:flex-start"><span style="color:#f6946b;font-weight:700;flex-shrink:0">→</span><span><strong style="color:#272d3e">Client ownership</strong> — build lasting relationships, on your terms</span></li>
+        </ul>
+      </div>
+      <div id="initiators">
+        <p class="section-eyebrow">For Initiators</p>
+        <h2 class="section-title" style="font-size:clamp(26px,3vw,38px)">You've got deadlines.<br>Find freelancers you can trust.</h2>
+        <p style="font-size:15px;color:rgba(39,45,62,0.65);line-height:1.7;margin-bottom:24px">If you've wasted time vetting freelancers who don't deliver, you'll feel the difference here.</p>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:12px">
+          <li style="font-size:14px;color:rgba(39,45,62,0.75);display:flex;gap:10px;align-items:flex-start"><span style="color:#f6946b;font-weight:700;flex-shrink:0">→</span><span><strong style="color:#272d3e">Verified talent</strong> — hire based on proven track record</span></li>
+          <li style="font-size:14px;color:rgba(39,45,62,0.75);display:flex;gap:10px;align-items:flex-start"><span style="color:#f6946b;font-weight:700;flex-shrink:0">→</span><span><strong style="color:#272d3e">Zero platform fees</strong> — spend budget on work, not fees</span></li>
+          <li style="font-size:14px;color:rgba(39,45,62,0.75);display:flex;gap:10px;align-items:flex-start"><span style="color:#f6946b;font-weight:700;flex-shrink:0">→</span><span><strong style="color:#272d3e">Streamlined collaboration</strong> — work how and where you want</span></li>
+          <li style="font-size:14px;color:rgba(39,45,62,0.75);display:flex;gap:10px;align-items:flex-start"><span style="color:#f6946b;font-weight:700;flex-shrink:0">→</span><span><strong style="color:#272d3e">Escrow protection</strong> — pay only when work is delivered</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <p class="section-eyebrow reveal" id="how">How It Works</p>
+    <h2 class="section-title reveal" style="color:var(--navy-dark)">Simple. Transparent. Fair.</h2>
+    <div class="steps-grid">
+      <div class="step-card reveal">
+        <div class="step-number">1</div>
+        <h3>Create Your Profile</h3>
+        <p>Sign up as a Maker or Initiator. Your profile becomes your digital identity — verified on-chain and owned by you.</p>
+      </div>
+      <div class="step-card reveal">
+        <div class="step-number">2</div>
+        <h3>Connect &amp; Collaborate</h3>
+        <p>Find each other through open projects. Everything happens directly — no middlemen, no platform interference.</p>
+      </div>
+      <div class="step-card reveal">
+        <div class="step-number">3</div>
+        <h3>Secure Payment in Escrow</h3>
+        <p>Funds move into escrow before work begins. Once milestones are approved, payment releases automatically.</p>
+      </div>
+      <div class="step-card reveal">
+        <div class="step-number">4</div>
+        <h3>Build Your Reputation</h3>
+        <p>Every completed project strengthens your verified record. Your reputation stays with you — forever.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 3 — CALCULATOR -->
+<section class="calc-section">
+  <div class="calc-inner">
+    <div class="calc-left">
+      <p class="section-eyebrow reveal">True Earnings Calculator</p>
+      <h2 class="section-title reveal">See what you've <em>actually</em> been earning</h2>
+      <p class="section-subtitle reveal" style="margin-top:16px">Every major freelance platform takes a cut of your work. Enter what you earn and see exactly how much you've been handing over — then see what you'd keep on Lyriem.</p>
+      <ul class="bullet-list reveal">
+        <li class="bullet-item"><span class="bullet-dot fiverr"></span><span><strong>Fiverr</strong> takes a flat 20% on every order. Every single one.</span></li>
+        <li class="bullet-item"><span class="bullet-dot upwork"></span><span><strong>Upwork</strong> starts at 20% and averages ~12% when you factor in their tiered structure.</span></li>
+        <li class="bullet-item"><span class="bullet-dot freelancer"></span><span><strong>Freelancer.com</strong> takes 10% on top of additional bid and milestone fees.</span></li>
+        <li class="bullet-item"><span class="bullet-dot lyriem"></span><span><strong>Lyriem</strong> takes nothing. Zero. Your rate is your rate.</span></li>
+      </ul>
+    </div>
+    <div class="calc-right reveal">
+      <div class="calc-widget">
+        <p class="calc-widget-label">Calculate your earnings</p>
+        <div class="calc-tabs">
+          <button class="calc-tab active" data-mode="annual">Annual earnings</button>
+          <button class="calc-tab" data-mode="project">Per project</button>
+        </div>
+        <div class="calc-input-wrap">
+          <span class="calc-dollar">$</span>
+          <input class="calc-input" id="earningsInput" type="number" value="60000" min="0" max="10000000">
+        </div>
+        <p class="calc-platform-label">Platforms you currently use</p>
+        <div class="platform-chips">
+          <button class="platform-chip active" data-fee="0.12">Upwork ~12% avg</button>
+          <button class="platform-chip" data-fee="0.20">Fiverr 20% flat</button>
+          <button class="platform-chip" data-fee="0.10">Freelancer.com 10%</button>
+          <button class="platform-chip" data-fee="0.06">Toptal 6%</button>
+        </div>
+        <div class="calc-results">
+          <div class="result-row">
+            <span class="result-label" id="platformLabel">Upwork</span>
+            <div class="result-bar-wrap"><div class="result-bar platform-bar" id="platformBar" style="width:100%"></div></div>
+            <span class="result-value negative" id="platformLoss">–$7,200</span>
+          </div>
+          <div class="result-row">
+            <span class="result-label">Lyriem</span>
+            <div class="result-bar-wrap"><div class="result-bar lyriem-bar" id="lyriemBar" style="width:100%"></div></div>
+            <span class="result-value positive" id="lyriemKept">$60,000 kept</span>
+          </div>
+        </div>
+        <div class="calc-summary">
+          <div class="summary-card"><p class="summary-label" id="lossLabel">Fees lost this year</p><p class="summary-value" id="lossValue">$7,200</p></div>
+          <div class="summary-card"><p class="summary-label" id="loss3Label">Over 3 years, you lose</p><p class="summary-value" id="loss3Value">$21,600</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 4 — WHY IT'S FREE -->
+<section class="free-section">
+  <div class="free-inner">
+    <div>
+      <p class="section-eyebrow reveal">Why It's Free</p>
+      <h2 class="reveal" style="font-weight:900;font-size:clamp(28px,3.5vw,44px);line-height:1.1;letter-spacing:-0.02em;margin-bottom:20px">No fees to freelancers.<br>No fees to businesses.</h2>
+      <p class="reveal" style="font-size:16px;color:var(--text-muted);line-height:1.7;margin-bottom:16px">Lyriem doesn't charge platform fees to anyone. Instead, anonymized, aggregated data about project trends helps power industry insights.</p>
+      <p class="reveal" style="font-size:16px;color:var(--text-muted);line-height:1.7;margin-bottom:16px">No personal or client information is ever shared — just the bigger picture that helps the freelance economy grow.</p>
+      <p class="reveal" style="font-size:16px;color:var(--text-muted);line-height:1.7">Looking for workforce insights or market trends? Visit <a href="#" style="color:var(--yellow);text-decoration:none;font-weight:600">Lyriem Data →</a></p>
+    </div>
+    <div class="free-highlight reveal">
+      <div class="free-highlight-item">
+        <div class="free-highlight-icon">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8">
+            <path d="M9 1l2.09 5.26L17 7.27l-4 3.9.94 5.49L9 14l-4.94 2.66.94-5.49-4-3.9 5.91-1.01z" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="free-highlight-text">
+          <h4>Anonymized &amp; Aggregated</h4>
+          <p>Only pattern-level data is collected — things like average rates for developers in Austin. Never individual names or project details.</p>
+        </div>
+      </div>
+      <div class="free-highlight-item">
+        <div class="free-highlight-icon">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8">
+            <rect x="2" y="3" width="14" height="12" rx="2"/>
+            <path d="M6 7h6M6 11h4" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="free-highlight-text">
+          <h4>Your Data Stays Private</h4>
+          <p>Lyriem never sells personal or client data. Your projects, your financials, and your client relationships are always yours.</p>
+        </div>
+      </div>
+      <div class="free-highlight-item">
+        <div class="free-highlight-icon">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8">
+            <path d="M9 2C5.13 2 2 5.13 2 9s3.13 7 7 7 7-3.13 7-7-3.13-7-7-7z"/>
+            <path d="M9 5v4l3 3" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="free-highlight-text">
+          <h4>Free to Use. Forever.</h4>
+          <p>There's no freemium tier, no bait and switch. Lyriem is simply free to use for both Makers and Initiators.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 5 — FAQ -->
+<section class="faq-section">
+  <div class="faq-inner">
+    <h2 class="section-title reveal">Frequently Asked Questions</h2>
+
+    <div class="faq-item reveal">
+      <button class="faq-question">What makes Lyriem different from other freelance platforms? <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1v12M1 7h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+      <div class="faq-answer">Lyriem was founded by experienced freelancers who got tired of handing over 20%+ of their income to platforms like Fiverr, Upwork, and Toptal. We built a fee-free alternative with zero platform commissions, escrow-backed payments, and on-chain reputation that belongs to you — not the platform.</div>
+    </div>
+    <div class="faq-item reveal">
+      <button class="faq-question">Can I really keep 100% of what I earn? <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1v12M1 7h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+      <div class="faq-answer">Yes. Lyriem charges zero platform commissions. You keep 100% of what you earn. The only optional cost is a small third-party processing fee if you choose instant payout — and we negotiate hard to keep those as low as possible.</div>
+    </div>
+    <div class="faq-item reveal">
+      <button class="faq-question">What are escrow-secured payments? <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1v12M1 7h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+      <div class="faq-answer">Escrow keeps both sides protected. Clients pre-fund the project, and funds stay locked until the work is delivered and approved. Freelancers know the money is guaranteed. Clients know they'll receive what they paid for. No ghosting, no unpaid invoices. Just fair exchange.</div>
+    </div>
+    <div class="faq-item reveal">
+      <button class="faq-question">What is on-chain reputation? <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1v12M1 7h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+      <div class="faq-answer">Every project you complete builds a verified record of your work history that lives on the blockchain — permanent, portable, and yours to keep even if you leave the platform. It's your reputation, not ours. You own it forever.</div>
+    </div>
+    <div class="faq-item reveal">
+      <button class="faq-question">Do I need crypto or digital wallets to use Lyriem? <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1v12M1 7h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+      <div class="faq-answer">No. Lyriem runs on blockchain technology in the background, but you don't need any tokens, coins, or digital wallets. If you can use Upwork or Fiverr, you can use Lyriem. Just without the fees.</div>
+    </div>
+    <div class="faq-item reveal">
+      <button class="faq-question">Why is Lyriem free to use? <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1v12M1 7h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+      <div class="faq-answer">Lyriem doesn't charge users. Instead, anonymized, aggregated data about freelance trends helps power broader industry insights. That's how the platform stays free while keeping your personal and project information completely private.</div>
+    </div>
+    <div class="faq-item reveal">
+      <button class="faq-question">Is my data private? <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1v12M1 7h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+      <div class="faq-answer">Always. Lyriem never sells personal or client data. Only anonymized, aggregated patterns are collected — things like average pay rates for developers in Austin. No individual names, projects, or financials are ever shared.</div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER CTA -->
+<section class="footer-cta" id="join">
+  <div class="texture-overlay"></div>
+  <div class="footer-cta-inner">
+    <h2 class="section-title reveal">You earned it.<br>You own it.<br>You keep it.</h2>
+    <p class="section-subtitle reveal">The way work should work — transparent, direct, fair.</p>
+    <p class="footer-tagline reveal">The freelance tax has gone on long enough.</p>
+    <a href="#" class="cta-btn reveal">Join Lyriem Free</a>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <span>© 2026 Lyriem. All rights reserved.</span>
+  <div class="footer-links">
+    <a href="#">Privacy</a>
+    <a href="#">Terms</a>
+    <a href="#">Contact</a>
+    <a href="#">Lyriem Data</a>
+  </div>
+</footer>
+
+<script>
+/* ═══════════════════════════════════════════════════════
+   MAKER CAROUSEL — commented out (static hero-bg.jpg used instead)
+   ═══════════════════════════════════════════════════════
+const AUTO_INTERVAL_MS = 5000; // ms per maker. 4000 = faster, 8000 = slower.
+const SLIDE_FADE_MS    = 1400; // crossfade. 1400 = cinematic, 600 = snappy.
+const TEXT_FADE_MS     = 450;  // name/desc fade.
+
+// ═══════════════════════════════════════════════════════
+//  MAKER DATA
+//  img: filename (e.g. 'maker1.png') — place in same folder as index.html
+//  Replace placeholder info with real maker details when ready.
+// ═══════════════════════════════════════════════════════
+const makers = [
+  {
+    label:    'Meet Chrissy',
+    name:     'Chrissy Navarro',
+    role:     'Experiential Design & 3D Visualization · 9 yrs',
+    location: 'Atlanta, GA · EST',
+    img:      'maker2.png',
+    color:    '#1e3030'
+  },
+  {
+    label:    'Meet Darius',
+    name:     'Darius Webb',
+    role:     'Brand Identity & Motion Graphics · 7 yrs',
+    location: 'Chicago, IL · CST',
+    img:      'maker1.png',
+    color:    '#2a3545'
+  },
+  {
+    label:    'Meet Priya',
+    name:     'Priya Mehta',
+    role:     'UX Research & Service Design · 6 yrs',
+    location: 'Austin, TX · CST',
+    img:      'maker3.png',
+    color:    '#301e30'
+  },
+  {
+    label:    'Meet Marco',
+    name:     'Marco Bellini',
+    role:     'Photography & Creative Direction · 11 yrs',
+    location: 'Miami, FL · EST',
+    img:      'maker4.png',
+    color:    '#20203a'
+  }
+];
+
+// Sync progress bar CSS
+(function() {
+  for (const sheet of document.styleSheets) {
+    try {
+      for (const rule of sheet.cssRules) {
+        if (rule.selectorText === '.dot-progress.running::after') {
+          rule.style.transition = `width ${AUTO_INTERVAL_MS / 1000}s linear`;
+        }
+      }
+    } catch(e) {}
+  }
+})();
+
+// Build slides
+const zone = document.getElementById('portraitZone');
+const slides = [];
+
+function hexAdd(hex, amt) {
+  const n = parseInt(hex.slice(1), 16);
+  return `rgb(${Math.min(255,((n>>16)&0xff)+amt)},${Math.min(255,((n>>8)&0xff)+amt)},${Math.min(255,(n&0xff)+amt)})`;
+}
+
+makers.forEach((maker, i) => {
+  const slide = document.createElement('div');
+  slide.className = 'portrait-slide' + (i === 0 ? ' active' : '');
+  slide.style.transition = `opacity ${SLIDE_FADE_MS}ms cubic-bezier(0.4,0,0.2,1)`;
+  if (maker.img) {
+    slide.innerHTML = `<img src="${maker.img}" alt="${maker.name}">`;
+  } else {
+    slide.style.cssText += `background:radial-gradient(ellipse 52% 68% at 58% 34%,${hexAdd(maker.color,40)} 0%,${maker.color} 42%,#0d1018 100%);width:100%;height:100%;position:absolute;inset:0;`;
+    slide.innerHTML = `<svg style="position:absolute;top:12%;left:50%;transform:translateX(-42%);opacity:0.12;width:230px;height:330px" viewBox="0 0 220 320" fill="none"><ellipse cx="110" cy="108" rx="66" ry="80" fill="white"/><path d="M8 320 C8 228 212 228 212 320" fill="white"/></svg>`;
+  }
+  zone.appendChild(slide);
+  slides.push(slide);
+});
+
+// Build dots
+const dotsEl = document.getElementById('carouselDots');
+makers.forEach((_, i) => {
+  const dot = document.createElement('button');
+  dot.className = 'dot' + (i === 0 ? ' active dot-progress' : '');
+  dot.setAttribute('aria-label', `Maker ${i + 1}`);
+  dot.addEventListener('click', () => { goTo(i); resetAutoTimer(); });
+  dotsEl.appendChild(dot);
+});
+const dots = Array.from(dotsEl.querySelectorAll('.dot'));
+
+const makerLabelEl   = document.getElementById('makerName');
+const makerFullName  = document.getElementById('makerFullName');
+const makerRole      = document.getElementById('makerRole');
+const makerLocation  = document.getElementById('makerLocation');
+const featuredCard   = document.getElementById('featuredMaker');
+const btnPrev        = document.getElementById('btnPrev');
+const btnNext        = document.getElementById('btnNext');
+const btnPause       = document.getElementById('btnPause');
+const iconPause      = document.getElementById('iconPause');
+const iconPlay       = document.getElementById('iconPlay');
+
+featuredCard.querySelectorAll('.featured-label,.maker-name,.maker-role,.maker-location,.view-link,.featured-maker-text').forEach(el => {
+  el.style.transition = `opacity ${TEXT_FADE_MS}ms ease`;
+});
+
+function setMakerText(i) {
+  makerLabelEl.textContent  = makers[i].label;
+  makerFullName.textContent = makers[i].name;
+  makerRole.textContent     = makers[i].role;
+  makerLocation.textContent = makers[i].location;
+}
+setMakerText(0);
+
+let current = 0, animating = false, paused = false, autoTimer = null;
+
+function goTo(next) {
+  if (animating || next === current) return;
+  animating = true;
+  featuredCard.classList.add('fading');
+  slides[current].classList.remove('active');
+  slides[next].classList.add('active');
+  dots[current].classList.remove('active','dot-progress','running');
+  dots[next].classList.add('active','dot-progress');
+  if (!paused) requestAnimationFrame(() => requestAnimationFrame(() => dots[next].classList.add('running')));
+  current = next;
+  setTimeout(() => { setMakerText(current); featuredCard.classList.remove('fading'); }, TEXT_FADE_MS);
+  setTimeout(() => { animating = false; }, SLIDE_FADE_MS);
+}
+
+function startAutoTimer() {
+  clearInterval(autoTimer);
+  autoTimer = setInterval(() => goTo((current + 1) % makers.length), AUTO_INTERVAL_MS);
+}
+function resetAutoTimer() {
+  if (!paused) {
+    startAutoTimer();
+    const d = dots[current];
+    d.classList.remove('running');
+    requestAnimationFrame(() => requestAnimationFrame(() => d.classList.add('running')));
+  }
+}
+
+startAutoTimer();
+requestAnimationFrame(() => requestAnimationFrame(() => dots[0].classList.add('running')));
+
+btnPrev.addEventListener('click', () => { goTo((current-1+makers.length)%makers.length); resetAutoTimer(); });
+btnNext.addEventListener('click', () => { goTo((current+1)%makers.length); resetAutoTimer(); });
+btnPause.addEventListener('click', () => {
+  paused = !paused;
+  if (paused) {
+    clearInterval(autoTimer); btnPause.classList.add('paused');
+    iconPause.style.display = 'none'; iconPlay.style.display = 'block';
+    dots[current].classList.remove('running');
+  } else {
+    btnPause.classList.remove('paused');
+    iconPause.style.display = 'block'; iconPlay.style.display = 'none';
+    startAutoTimer();
+    dots[current].classList.remove('running');
+    requestAnimationFrame(() => requestAnimationFrame(() => dots[current].classList.add('running')));
+  }
+});
+   END MAKER CAROUSEL */
+
+// ── CALCULATOR ────────────────────────────────────────
+const platforms = {
+  'Upwork ~12% avg':    { fee: 0.12, name: 'Upwork' },
+  'Fiverr 20% flat':    { fee: 0.20, name: 'Fiverr' },
+  'Freelancer.com 10%': { fee: 0.10, name: 'Freelancer.com' },
+  'Toptal 6%':          { fee: 0.06, name: 'Toptal' }
+};
+let activePlatform = 'Upwork ~12% avg', calcMode = 'annual';
+const earningsInput = document.getElementById('earningsInput');
+const platformLabel = document.getElementById('platformLabel');
+const platformBar   = document.getElementById('platformBar');
+const lyriemBar     = document.getElementById('lyriemBar');
+const platformLoss  = document.getElementById('platformLoss');
+const lyriemKept    = document.getElementById('lyriemKept');
+const lossValue     = document.getElementById('lossValue');
+const loss3Value    = document.getElementById('loss3Value');
+const lossLabel     = document.getElementById('lossLabel');
+const loss3Label    = document.getElementById('loss3Label');
+
+function fmt(n) { return '$' + Math.round(n).toLocaleString(); }
+function updateCalc() {
+  const raw = parseFloat(earningsInput.value) || 0;
+  const p   = platforms[activePlatform];
+  const fee = raw * p.fee;
+  platformLabel.textContent = p.name;
+  platformBar.style.width   = (p.fee * 100) + '%';
+  lyriemBar.style.width     = '100%';
+  platformLoss.textContent  = '–' + fmt(fee);
+  lyriemKept.textContent    = fmt(raw) + ' kept';
+  lossValue.textContent     = fmt(fee);
+  const period = calcMode === 'annual' ? 'this year' : 'this project';
+  lossLabel.textContent  = `Fees lost ${period}`;
+  loss3Label.textContent = calcMode === 'annual' ? 'Over 3 years, you lose' : 'Over 10 projects, you lose';
+  loss3Value.textContent = calcMode === 'annual' ? fmt(fee * 3) : fmt(fee * 10);
+}
+document.querySelectorAll('.platform-chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    document.querySelectorAll('.platform-chip').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    activePlatform = chip.textContent.trim();
+    updateCalc();
+  });
+});
+document.querySelectorAll('.calc-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.calc-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    calcMode = tab.dataset.mode;
+    updateCalc();
+  });
+});
+earningsInput.addEventListener('input', updateCalc);
+updateCalc();
+
+// ── SCROLL REVEAL ─────────────────────────────────────
+const revealEls = document.querySelectorAll('.reveal');
+const observer  = new IntersectionObserver((entries) => {
+  entries.forEach((entry) => {
+    if (entry.isIntersecting) {
+      const siblings = Array.from(entry.target.parentElement.querySelectorAll('.reveal'));
+      const idx = siblings.indexOf(entry.target);
+      setTimeout(() => entry.target.classList.add('visible'), idx * 80);
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.15 });
+revealEls.forEach(el => observer.observe(el));
+
+// ── FAQ ACCORDION ─────────────────────────────────────
+document.querySelectorAll('.faq-question').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const item = btn.parentElement;
+    const isOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+    if (!isOpen) item.classList.add('open');
+  });
+});
+
+// ── MOBILE NAV ────────────────────────────────────────
+const hamburger = document.getElementById('navHamburger');
+const navDrawer = document.getElementById('navDrawer');
+function closeNav() {
+  hamburger.classList.remove('open');
+  navDrawer.classList.remove('open');
+}
+hamburger.addEventListener('click', () => {
+  hamburger.classList.toggle('open');
+  navDrawer.classList.toggle('open');
+});
+window.addEventListener('scroll', closeNav, { passive: true });
+</script>
+</body>
+</html>
