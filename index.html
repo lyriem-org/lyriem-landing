@@ -297,6 +297,23 @@
 
   .calc-widget { background: #ffffff; border: 1px solid rgba(53,60,80,0.12); padding: 36px; box-shadow: 0 4px 32px rgba(53,60,80,0.08); }
   .calc-widget-label { font-size: 10px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(39,45,62,0.45); margin-bottom: 20px; }
+
+  /* ── MAKER / INITIATOR TOGGLE ── */
+  .calc-mode-toggle {
+    display: flex; background: #f5f5f7;
+    border: 1px solid rgba(53,60,80,0.12); border-radius: 4px;
+    padding: 4px; gap: 4px; margin-bottom: 24px;
+  }
+  .calc-mode-btn {
+    flex: 1; padding: 10px 16px; font-size: 13px; font-weight: 700;
+    font-family: 'DM Sans', sans-serif; letter-spacing: 0.04em;
+    text-align: center; cursor: pointer;
+    color: rgba(39,45,62,0.5); background: transparent;
+    border: none; border-radius: 3px;
+    transition: background 0.2s, color 0.2s;
+  }
+  .calc-mode-btn.active { background: var(--navy-dark); color: #ffffff; }
+
   .calc-tabs { display: flex; border: 1px solid rgba(53,60,80,0.15); margin-bottom: 24px; }
   .calc-tab {
     flex: 1; padding: 10px; font-size: 13px; font-weight: 600; text-align: center;
@@ -455,8 +472,8 @@
     nav > a, nav > span { display: none; }
     .nav-hamburger { display: flex; }
 
-    /* Hero grows to fit content, image stays absolutely behind it */
-    .hero { height: auto; min-height: 100vh; }
+    /* Hero — shorter on mobile */
+    .hero { height: auto; min-height: 0; }
 
     .portrait-row {
       display: block !important;
@@ -486,14 +503,14 @@
     .texture-portrait { display: block !important; }
 
     /* content sits on top of image */
-    .hero-content { padding: 28px 24px 160px; max-width: 100%; justify-content: flex-start; flex: 0 0 auto; }
+    .hero-content { padding: 28px 24px 24px; max-width: 100%; justify-content: flex-start; flex: 0 0 auto; }
     .logo { margin-left: -18px; margin-bottom: 20px; }
     .logo svg { width: 190px !important; }
     .headline { font-size: clamp(36px, 10.5vw, 54px); margin-bottom: 16px; }
     .subhead  { font-size: 12px; margin-bottom: 0; }
 
-    /* CTA pinned to bottom of hero */
-    .cta-zone { position: absolute; bottom: 40px; left: 0; right: 0; padding: 0 24px; }
+    /* CTA — sits naturally below content, not absolutely positioned */
+    .cta-zone { position: static; padding: 20px 24px 32px; display: flex; justify-content: center; }
     .cta-btn  { width: auto; padding: 16px 48px; font-size: 13px; }
 
     .broken-inner, .how-inner, .footer-cta-inner, .faq-inner { padding: 64px 24px; }
@@ -692,10 +709,17 @@
     </div>
     <div class="calc-right reveal">
       <div class="calc-widget">
-        <p class="calc-widget-label">Calculate your earnings</p>
+        <p class="calc-widget-label" id="calcWidgetLabel">Calculate your earnings</p>
+
+        <!-- Maker / Initiator toggle -->
+        <div class="calc-mode-toggle">
+          <button class="calc-mode-btn active" data-mode="maker">I'm a Maker</button>
+          <button class="calc-mode-btn" data-mode="initiator">I'm an Initiator</button>
+        </div>
+
         <div class="calc-tabs">
-          <button class="calc-tab active" data-mode="annual">Annual earnings</button>
-          <button class="calc-tab" data-mode="project">Per project</button>
+          <button class="calc-tab active" data-period="annual" id="calcTabAnnual">Annual earnings</button>
+          <button class="calc-tab" data-period="project" id="calcTabProject">Per project</button>
         </div>
         <div class="calc-input-wrap">
           <span class="calc-dollar">$</span>
@@ -715,7 +739,7 @@
             <span class="result-value negative" id="platformLoss">–$7,200</span>
           </div>
           <div class="result-row">
-            <span class="result-label">Lyriem</span>
+            <span class="result-label" id="lyriemLabel">Lyriem</span>
             <div class="result-bar-wrap"><div class="result-bar lyriem-bar" id="lyriemBar" style="width:100%"></div></div>
             <span class="result-value positive" id="lyriemKept">$60,000 kept</span>
           </div>
@@ -724,6 +748,10 @@
           <div class="summary-card"><p class="summary-label" id="lossLabel">Fees lost this year</p><p class="summary-value" id="lossValue">$7,200</p></div>
           <div class="summary-card"><p class="summary-label" id="loss3Label">Over 3 years, you lose</p><p class="summary-value" id="loss3Value">$21,600</p></div>
         </div>
+        <!-- Stripe fee note — shown for Initiators only -->
+        <p id="stripeFeeNote" style="display:none;margin-top:16px;font-size:11px;color:rgba(39,45,62,0.5);line-height:1.6">
+          * Lyriem charges no platform fees. Initiators pay a Stripe processing fee of 3.3% + $4 per transaction.
+        </p>
       </div>
     </div>
   </div>
@@ -795,34 +823,99 @@ const platforms = {
   'Freelancer.com 10%': { fee: 0.10, name: 'Freelancer.com' },
   'Toptal 6%':          { fee: 0.06, name: 'Toptal' }
 };
-let activePlatform = 'Upwork ~12% avg', calcMode = 'annual';
-const earningsInput = document.getElementById('earningsInput');
-const platformLabel = document.getElementById('platformLabel');
-const platformBar   = document.getElementById('platformBar');
-const lyriemBar     = document.getElementById('lyriemBar');
-const platformLoss  = document.getElementById('platformLoss');
-const lyriemKept    = document.getElementById('lyriemKept');
-const lossValue     = document.getElementById('lossValue');
-const loss3Value    = document.getElementById('loss3Value');
-const lossLabel     = document.getElementById('lossLabel');
-const loss3Label    = document.getElementById('loss3Label');
+
+// Stripe fee for Initiators: 3.3% + $4
+const STRIPE_PCT = 0.033;
+const STRIPE_FLAT = 4;
+
+let activePlatform = 'Upwork ~12% avg';
+let calcPeriod     = 'annual';   // annual | project
+let userMode       = 'maker';    // maker | initiator
+
+const earningsInput  = document.getElementById('earningsInput');
+const platformLabel  = document.getElementById('platformLabel');
+const lyriemLabel    = document.getElementById('lyriemLabel');
+const platformBar    = document.getElementById('platformBar');
+const lyriemBar      = document.getElementById('lyriemBar');
+const platformLoss   = document.getElementById('platformLoss');
+const lyriemKept     = document.getElementById('lyriemKept');
+const lossValue      = document.getElementById('lossValue');
+const loss3Value     = document.getElementById('loss3Value');
+const lossLabel      = document.getElementById('lossLabel');
+const loss3Label     = document.getElementById('loss3Label');
+const widgetLabel    = document.getElementById('calcWidgetLabel');
+const tabAnnual      = document.getElementById('calcTabAnnual');
+const tabProject     = document.getElementById('calcTabProject');
+const stripeFeeNote  = document.getElementById('stripeFeeNote');
 
 function fmt(n) { return '$' + Math.round(n).toLocaleString(); }
+
 function updateCalc() {
-  const raw = parseFloat(earningsInput.value) || 0;
-  const p   = platforms[activePlatform];
-  const fee = raw * p.fee;
+  const raw   = parseFloat(earningsInput.value) || 0;
+  const p     = platforms[activePlatform];
+  const fee   = raw * p.fee;
+  const isMaker = userMode === 'maker';
+
+  // Stripe fee for initiators
+  const stripeFee = isMaker ? 0 : (raw * STRIPE_PCT + STRIPE_FLAT);
+
   platformLabel.textContent = p.name;
   platformBar.style.width   = (p.fee * 100) + '%';
   lyriemBar.style.width     = '100%';
-  platformLoss.textContent  = '–' + fmt(fee);
-  lyriemKept.textContent    = fmt(raw) + ' kept';
-  lossValue.textContent     = fmt(fee);
-  const period = calcMode === 'annual' ? 'this year' : 'this project';
-  lossLabel.textContent  = `Fees lost ${period}`;
-  loss3Label.textContent = calcMode === 'annual' ? 'Over 3 years, you lose' : 'Over 10 projects, you lose';
-  loss3Value.textContent = calcMode === 'annual' ? fmt(fee * 3) : fmt(fee * 10);
+
+  if (isMaker) {
+    platformLoss.textContent = '–' + fmt(fee);
+    lyriemKept.textContent   = fmt(raw) + ' kept';
+    lossValue.textContent    = fmt(fee);
+    const period = calcPeriod === 'annual' ? 'this year' : 'this project';
+    lossLabel.textContent    = 'Fees lost ' + period;
+    loss3Label.textContent   = calcPeriod === 'annual' ? 'Over 3 years, you lose' : 'Over 10 projects, you lose';
+    loss3Value.textContent   = calcPeriod === 'annual' ? fmt(fee * 3) : fmt(fee * 10);
+    lyriemLabel.textContent  = 'Lyriem';
+    stripeFeeNote.style.display = 'none';
+  } else {
+    // Initiator: show platform overhead vs Stripe-only cost
+    platformLoss.textContent = '–' + fmt(fee) + ' overhead';
+    lyriemKept.textContent   = fmt(stripeFee) + ' Stripe fee*';
+    lossValue.textContent    = fmt(fee);
+    const period2 = calcPeriod === 'annual' ? 'this year' : 'this project';
+    lossLabel.textContent    = 'Platform overhead ' + period2;
+    loss3Label.textContent   = calcPeriod === 'annual' ? 'Over 3 years, wasted' : 'Over 10 projects, wasted';
+    loss3Value.textContent   = calcPeriod === 'annual' ? fmt(fee * 3) : fmt(fee * 10);
+    lyriemLabel.textContent  = 'Lyriem*';
+    stripeFeeNote.style.display = 'block';
+  }
 }
+
+function applyMode() {
+  const isMaker = userMode === 'maker';
+  widgetLabel.textContent  = isMaker ? 'Calculate your earnings' : 'Calculate your budget';
+  tabAnnual.textContent    = isMaker ? 'Annual earnings' : 'Annual budget';
+  tabProject.textContent   = 'Per project';
+  earningsInput.value      = isMaker ? 60000 : 25000;
+  updateCalc();
+}
+
+// Mode toggle (Maker / Initiator)
+document.querySelectorAll('.calc-mode-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.calc-mode-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    userMode = btn.dataset.mode;
+    applyMode();
+  });
+});
+
+// Period tabs (Annual / Per project)
+document.querySelectorAll('.calc-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.calc-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    calcPeriod = tab.dataset.period;
+    updateCalc();
+  });
+});
+
 document.querySelectorAll('.platform-chip').forEach(chip => {
   chip.addEventListener('click', () => {
     document.querySelectorAll('.platform-chip').forEach(c => c.classList.remove('active'));
@@ -831,16 +924,9 @@ document.querySelectorAll('.platform-chip').forEach(chip => {
     updateCalc();
   });
 });
-document.querySelectorAll('.calc-tab').forEach(tab => {
-  tab.addEventListener('click', () => {
-    document.querySelectorAll('.calc-tab').forEach(t => t.classList.remove('active'));
-    tab.classList.add('active');
-    calcMode = tab.dataset.mode;
-    updateCalc();
-  });
-});
+
 earningsInput.addEventListener('input', updateCalc);
-updateCalc();
+applyMode();
 
 const revealEls = document.querySelectorAll('.reveal');
 const observer  = new IntersectionObserver((entries) => {
