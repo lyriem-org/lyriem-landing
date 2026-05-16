@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Lyriem</title>
 <meta name="description" content="Lyriem is the Upwork alternative. A freelance marketplace with no platform fees, escrow protection, and verified portable reputation. Hire freelancers.">
-<link rel="icon" type="image/svg+xml" href="favicon.svg">
-<link rel="preload" as="image" href="hero-bg.jpg" fetchpriority="high">
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<link rel="preload" as="image" href="assets/hero-bg.jpg" fetchpriority="high">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;0,9..40,900;1,9..40,400&display=swap" rel="stylesheet">
@@ -118,8 +118,9 @@
     letter-spacing: 0.1em;
     text-transform: uppercase;
   }
-  nav a { color: var(--white); text-decoration: none; opacity: 0.82; transition: opacity 0.2s; }
+  nav a { color: var(--white); text-decoration: none; opacity: 0.82; transition: opacity 0.2s, color 0.2s; }
   nav a:hover { opacity: 1; }
+  nav a[aria-current="page"] { color: var(--yellow); opacity: 1; }
   .nav-already { opacity: 0.5; font-weight: 400; text-transform: none; letter-spacing: 0; font-size: 13px; }
   .nav-signin  { color: var(--yellow) !important; opacity: 1 !important; font-weight: 700; }
   .nav-logo-mobile { display: none; }
@@ -773,11 +774,11 @@
     <polygon points="30,4 52,32 8,32" fill="#d4e022"/>
     <polygon points="30,116 52,88 8,88" fill="#f6946b"/>
   </svg>
-  <a href="#">Home</a>
-  <a href="#about">About</a>
-  <a href="#makers">For Makers</a>
-  <a href="#initiators">For Initiators</a>
-  <a href="#how">How It Works</a>
+  <a href="index.html" aria-current="page">Home</a>
+  <a href="about.html">About</a>
+  <a href="for-makers.html">For Makers</a>
+  <a href="for-initiators.html">For Initiators</a>
+  <a href="how-it-works.html">How It Works</a>
   <span class="nav-already">Already have an account?</span>
   <a href="https://app.lyriem.com/login" class="nav-signin">Sign In</a>
   <button class="nav-hamburger" id="navHamburger" aria-label="Open menu">
@@ -786,11 +787,11 @@
 </nav>
 
 <div class="nav-drawer" id="navDrawer">
-  <a href="#" onclick="closeNav()">Home</a>
-  <a href="#about" onclick="closeNav()">About</a>
-  <a href="#makers" onclick="closeNav()">For Makers</a>
-  <a href="#initiators" onclick="closeNav()">For Initiators</a>
-  <a href="#how" onclick="closeNav()">How It Works</a>
+  <a href="index.html" aria-current="page" onclick="closeNav()">Home</a>
+  <a href="about.html" onclick="closeNav()">About</a>
+  <a href="for-makers.html" onclick="closeNav()">For Makers</a>
+  <a href="for-initiators.html" onclick="closeNav()">For Initiators</a>
+  <a href="how-it-works.html" onclick="closeNav()">How It Works</a>
   <span class="nav-already">Already have an account?</span>
   <a href="https://app.lyriem.com/login" class="nav-signin" onclick="closeNav()">Sign In</a>
 </div>
@@ -801,48 +802,13 @@
 
   <div class="portrait-row">
     <div class="portrait-zone" id="portraitZone">
-      <div class="portrait-slide active"><img src="hero-bg.jpg" alt="" fetchpriority="high" decoding="async"></div>
+      <div class="portrait-slide active"><img src="assets/hero-bg.jpg" alt="" fetchpriority="high" decoding="async"></div>
     </div>
     <div class="portrait-vignette"></div>
     <div class="portrait-glow"></div>
     <div class="texture-overlay texture-portrait"></div>
   </div>
 
-  <!-- Featured maker carousel — commented out
-  <div class="featured-maker" id="featuredMaker">
-    <div class="featured-rule"></div>
-    <div class="featured-maker-text">
-      <p class="featured-label">Featured Maker: <span id="makerName"></span></p>
-      <p class="maker-name" id="makerFullName"></p>
-      <p class="maker-role" id="makerRole"></p>
-      <p class="maker-location">
-        <svg width="10" height="12" viewBox="0 0 10 12" fill="none">
-          <path d="M5 0C2.79 0 1 1.79 1 4c0 3 4 8 4 8s4-5 4-8c0-2.21-1.79-4-4-4zm0 5.5C4.17 5.5 3.5 4.83 3.5 4S4.17 2.5 5 2.5 6.5 3.17 6.5 4 5.83 5.5 5 5.5z" fill="currentColor"/>
-        </svg>
-        <span id="makerLocation"></span>
-      </p>
-      <a href="#" class="view-link" id="viewLink">
-        View Profile
-        <svg width="12" height="10" viewBox="0 0 12 10" fill="none">
-          <path d="M1 5h10M7 1l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </a>
-    </div>
-    <div class="carousel-controls">
-      <button class="ctrl-btn" id="btnPrev" aria-label="Previous maker">
-        <svg width="9" height="11" viewBox="0 0 9 11" fill="none"><path d="M7 1L2 5.5L7 10" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </button>
-      <div class="carousel-dots" id="carouselDots"></div>
-      <button class="ctrl-btn" id="btnNext" aria-label="Next maker">
-        <svg width="9" height="11" viewBox="0 0 9 11" fill="none"><path d="M2 1L7 5.5L2 10" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </button>
-      <button class="ctrl-pause" id="btnPause" aria-label="Pause">
-        <svg id="iconPause" width="10" height="11" viewBox="0 0 10 11" fill="currentColor"><rect x="1" y="1" width="3" height="9" rx="0.5"/><rect x="6" y="1" width="3" height="9" rx="0.5"/></svg>
-        <svg id="iconPlay" width="10" height="11" viewBox="0 0 10 11" fill="currentColor" style="display:none"><path d="M1 1L9 5.5L1 10V1Z"/></svg>
-      </button>
-    </div>
-  </div>
-  -->
 
 
   <div class="hero-content">
@@ -1118,178 +1084,12 @@
   <div class="footer-links">
     <a href="#">Privacy</a>
     <a href="#">Terms</a>
-    <a href="#">Contact</a>
+    <a href="mailto:austin.riggs@lyriem.com">Contact</a>
     <a href="#">Lyriem Data</a>
   </div>
 </footer>
 
 <script>
-/* ═══════════════════════════════════════════════════════
-   MAKER CAROUSEL — commented out (static hero-bg.jpg used instead)
-   ═══════════════════════════════════════════════════════
-const AUTO_INTERVAL_MS = 5000; // ms per maker. 4000 = faster, 8000 = slower.
-const SLIDE_FADE_MS    = 1400; // crossfade. 1400 = cinematic, 600 = snappy.
-const TEXT_FADE_MS     = 450;  // name/desc fade.
-
-// ═══════════════════════════════════════════════════════
-//  MAKER DATA
-//  img: filename (e.g. 'maker1.png') — place in same folder as index.html
-//  Replace placeholder info with real maker details when ready.
-// ═══════════════════════════════════════════════════════
-const makers = [
-  {
-    label:    'Meet Chrissy',
-    name:     'Chrissy Navarro',
-    role:     'Experiential Design & 3D Visualization · 9 yrs',
-    location: 'Atlanta, GA · EST',
-    img:      'maker2.png',
-    color:    '#1e3030'
-  },
-  {
-    label:    'Meet Darius',
-    name:     'Darius Webb',
-    role:     'Brand Identity & Motion Graphics · 7 yrs',
-    location: 'Chicago, IL · CST',
-    img:      'maker1.png',
-    color:    '#2a3545'
-  },
-  {
-    label:    'Meet Priya',
-    name:     'Priya Mehta',
-    role:     'UX Research & Service Design · 6 yrs',
-    location: 'Austin, TX · CST',
-    img:      'maker3.png',
-    color:    '#301e30'
-  },
-  {
-    label:    'Meet Marco',
-    name:     'Marco Bellini',
-    role:     'Photography & Creative Direction · 11 yrs',
-    location: 'Miami, FL · EST',
-    img:      'maker4.png',
-    color:    '#20203a'
-  }
-];
-
-// Sync progress bar CSS
-(function() {
-  for (const sheet of document.styleSheets) {
-    try {
-      for (const rule of sheet.cssRules) {
-        if (rule.selectorText === '.dot-progress.running::after') {
-          rule.style.transition = `width ${AUTO_INTERVAL_MS / 1000}s linear`;
-        }
-      }
-    } catch(e) {}
-  }
-})();
-
-// Build slides
-const zone = document.getElementById('portraitZone');
-const slides = [];
-
-function hexAdd(hex, amt) {
-  const n = parseInt(hex.slice(1), 16);
-  return `rgb(${Math.min(255,((n>>16)&0xff)+amt)},${Math.min(255,((n>>8)&0xff)+amt)},${Math.min(255,(n&0xff)+amt)})`;
-}
-
-makers.forEach((maker, i) => {
-  const slide = document.createElement('div');
-  slide.className = 'portrait-slide' + (i === 0 ? ' active' : '');
-  slide.style.transition = `opacity ${SLIDE_FADE_MS}ms cubic-bezier(0.4,0,0.2,1)`;
-  if (maker.img) {
-    slide.innerHTML = `<img src="${maker.img}" alt="${maker.name}">`;
-  } else {
-    slide.style.cssText += `background:radial-gradient(ellipse 52% 68% at 58% 34%,${hexAdd(maker.color,40)} 0%,${maker.color} 42%,#0d1018 100%);width:100%;height:100%;position:absolute;inset:0;`;
-    slide.innerHTML = `<svg style="position:absolute;top:12%;left:50%;transform:translateX(-42%);opacity:0.12;width:230px;height:330px" viewBox="0 0 220 320" fill="none"><ellipse cx="110" cy="108" rx="66" ry="80" fill="white"/><path d="M8 320 C8 228 212 228 212 320" fill="white"/></svg>`;
-  }
-  zone.appendChild(slide);
-  slides.push(slide);
-});
-
-// Build dots
-const dotsEl = document.getElementById('carouselDots');
-makers.forEach((_, i) => {
-  const dot = document.createElement('button');
-  dot.className = 'dot' + (i === 0 ? ' active dot-progress' : '');
-  dot.setAttribute('aria-label', `Maker ${i + 1}`);
-  dot.addEventListener('click', () => { goTo(i); resetAutoTimer(); });
-  dotsEl.appendChild(dot);
-});
-const dots = Array.from(dotsEl.querySelectorAll('.dot'));
-
-const makerLabelEl   = document.getElementById('makerName');
-const makerFullName  = document.getElementById('makerFullName');
-const makerRole      = document.getElementById('makerRole');
-const makerLocation  = document.getElementById('makerLocation');
-const featuredCard   = document.getElementById('featuredMaker');
-const btnPrev        = document.getElementById('btnPrev');
-const btnNext        = document.getElementById('btnNext');
-const btnPause       = document.getElementById('btnPause');
-const iconPause      = document.getElementById('iconPause');
-const iconPlay       = document.getElementById('iconPlay');
-
-featuredCard.querySelectorAll('.featured-label,.maker-name,.maker-role,.maker-location,.view-link,.featured-maker-text').forEach(el => {
-  el.style.transition = `opacity ${TEXT_FADE_MS}ms ease`;
-});
-
-function setMakerText(i) {
-  makerLabelEl.textContent  = makers[i].label;
-  makerFullName.textContent = makers[i].name;
-  makerRole.textContent     = makers[i].role;
-  makerLocation.textContent = makers[i].location;
-}
-setMakerText(0);
-
-let current = 0, animating = false, paused = false, autoTimer = null;
-
-function goTo(next) {
-  if (animating || next === current) return;
-  animating = true;
-  featuredCard.classList.add('fading');
-  slides[current].classList.remove('active');
-  slides[next].classList.add('active');
-  dots[current].classList.remove('active','dot-progress','running');
-  dots[next].classList.add('active','dot-progress');
-  if (!paused) requestAnimationFrame(() => requestAnimationFrame(() => dots[next].classList.add('running')));
-  current = next;
-  setTimeout(() => { setMakerText(current); featuredCard.classList.remove('fading'); }, TEXT_FADE_MS);
-  setTimeout(() => { animating = false; }, SLIDE_FADE_MS);
-}
-
-function startAutoTimer() {
-  clearInterval(autoTimer);
-  autoTimer = setInterval(() => goTo((current + 1) % makers.length), AUTO_INTERVAL_MS);
-}
-function resetAutoTimer() {
-  if (!paused) {
-    startAutoTimer();
-    const d = dots[current];
-    d.classList.remove('running');
-    requestAnimationFrame(() => requestAnimationFrame(() => d.classList.add('running')));
-  }
-}
-
-startAutoTimer();
-requestAnimationFrame(() => requestAnimationFrame(() => dots[0].classList.add('running')));
-
-btnPrev.addEventListener('click', () => { goTo((current-1+makers.length)%makers.length); resetAutoTimer(); });
-btnNext.addEventListener('click', () => { goTo((current+1)%makers.length); resetAutoTimer(); });
-btnPause.addEventListener('click', () => {
-  paused = !paused;
-  if (paused) {
-    clearInterval(autoTimer); btnPause.classList.add('paused');
-    iconPause.style.display = 'none'; iconPlay.style.display = 'block';
-    dots[current].classList.remove('running');
-  } else {
-    btnPause.classList.remove('paused');
-    iconPause.style.display = 'block'; iconPlay.style.display = 'none';
-    startAutoTimer();
-    dots[current].classList.remove('running');
-    requestAnimationFrame(() => requestAnimationFrame(() => dots[current].classList.add('running')));
-  }
-});
-   END MAKER CAROUSEL */
 
 // ── CALCULATOR ────────────────────────────────────────
 const platforms = {
