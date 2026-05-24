@@ -62,4 +62,19 @@
     revealEls.forEach(function(el) { el.classList.add('visible'); });
   }
 
+  // ── COPY EMAIL (footer contact) ──────────────────────────
+  document.querySelectorAll('.js-copy-email').forEach(function(link) {
+    link.addEventListener('click', function() {
+      var email = (link.getAttribute('href') || '').replace(/^mailto:/, '');
+      if (navigator.clipboard && email) {
+        navigator.clipboard.writeText(email).then(function() {
+          var original = link.textContent;
+          link.textContent = 'Copied!';
+          setTimeout(function() { link.textContent = original; }, 2000);
+        }).catch(function() {});
+      }
+      // No preventDefault: mailto still opens a mail client if one exists.
+    });
+  });
+
 })();
