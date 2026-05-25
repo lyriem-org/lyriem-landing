@@ -811,7 +811,7 @@
   <div class="footer-links">
     <a href="assets/privacy-policy.pdf" target="_blank" rel="noopener noreferrer">Privacy</a>
     <a href="assets/terms-conditions.pdf" target="_blank" rel="noopener noreferrer">Terms</a>
-    <a href="mailto:contact@lyriem.com" class="js-copy-email" title="Click to copy our email">contact@lyriem.com</a>
+    <a href="contact.html">Contact</a>
     <a href="assets/data-privacy-policy.pdf" target="_blank" rel="noopener noreferrer">Lyriem Data</a>
   </div>
 </footer>
@@ -961,21 +961,6 @@ hamburger.addEventListener('click', () => {
   navDrawer.classList.toggle('open');
 });
 window.addEventListener('scroll', closeNav, { passive: true });
-
-// ── COPY EMAIL (footer contact) ──
-document.querySelectorAll('.js-copy-email').forEach(function (link) {
-  link.addEventListener('click', function () {
-    var email = (link.getAttribute('href') || '').replace(/^mailto:/, '');
-    if (navigator.clipboard && email) {
-      navigator.clipboard.writeText(email).then(function () {
-        var original = link.textContent;
-        link.textContent = 'Copied!';
-        setTimeout(function () { link.textContent = original; }, 2000);
-      }).catch(function () {});
-    }
-    // No preventDefault: mailto still opens a mail client if one exists.
-  });
-});
 </script>
 </body>
 </html>
