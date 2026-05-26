@@ -293,6 +293,7 @@
   .bullet-dot.upwork     { background: #27ae60; }
   .bullet-dot.freelancer { background: #3498db; }
   .bullet-dot.lyriem     { background: var(--yellow); }
+  .bullet-dot.toptal     { background: #6c5ce7; }
   .bullet-item strong { color: var(--navy-dark); }
 
   .calc-widget { background: #ffffff; border: 1px solid rgba(53,60,80,0.12); padding: 36px; box-shadow: 0 4px 32px rgba(53,60,80,0.08); }
@@ -702,8 +703,9 @@
       <p class="section-subtitle reveal" style="margin-top:16px">Every major freelance platform takes a cut of your work. Enter what you earn and see exactly how much you've been handing over — then see what you'd keep on Lyriem.</p>
       <ul class="bullet-list reveal">
         <li class="bullet-item"><span class="bullet-dot fiverr"></span><span><strong>Fiverr</strong> takes a flat 20% on every order. Every single one.</span></li>
-        <li class="bullet-item"><span class="bullet-dot upwork"></span><span><strong>Upwork</strong> starts at 20% and averages ~12% when you factor in their tiered structure.</span></li>
+        <li class="bullet-item"><span class="bullet-dot upwork"></span><span><strong>Upwork</strong> takes up to 15% from you — plus another 5–8% charged to your client.</span></li>
         <li class="bullet-item"><span class="bullet-dot freelancer"></span><span><strong>Freelancer.com</strong> takes 10% on top of additional bid and milestone fees.</span></li>
+        <li class="bullet-item"><span class="bullet-dot toptal"></span><span><strong>Toptal</strong> doesn't cut your pay — but marks you up to clients by up to 50%, pricing you out.</span></li>
         <li class="bullet-item"><span class="bullet-dot lyriem"></span><span><strong>Lyriem</strong> takes nothing. Zero. Your rate is your rate.</span></li>
       </ul>
     </div>
@@ -727,10 +729,10 @@
         </div>
         <p class="calc-platform-label">Platforms you currently use</p>
         <div class="platform-chips">
-          <button class="platform-chip active" data-fee="0.12">Upwork ~12% avg</button>
+          <button class="platform-chip active" data-fee="0.15">Upwork up to 15%</button>
           <button class="platform-chip" data-fee="0.20">Fiverr 20% flat</button>
           <button class="platform-chip" data-fee="0.10">Freelancer.com 10%</button>
-          <button class="platform-chip" data-fee="0.06">Toptal 6%</button>
+          <button class="platform-chip" data-fee="0.50">Toptal up to 50% markup</button>
         </div>
         <div class="calc-results">
           <div class="result-row">
@@ -748,6 +750,8 @@
           <div class="summary-card"><p class="summary-label" id="lossLabel">Fees lost this year</p><p class="summary-value" id="lossValue">$7,200</p></div>
           <div class="summary-card"><p class="summary-label" id="loss3Label">Over 3 years, you lose</p><p class="summary-value" id="loss3Value">$21,600</p></div>
         </div>
+        <!-- Maker note — shown when the platform takes 0% from the freelancer (Toptal) -->
+        <p id="makerMarkupNote" style="display:none;margin-top:16px;font-size:11px;color:rgba(39,45,62,0.5);line-height:1.6"></p>
         <!-- Stripe fee note — shown for Initiators only -->
         <p id="stripeFeeNote" style="display:none;margin-top:16px;font-size:11px;color:rgba(39,45,62,0.5);line-height:1.6">
           * Lyriem charges no platform fees. Initiators pay a Stripe processing fee of 3.3% + $4 per transaction.
@@ -817,18 +821,20 @@
 </footer>
 
 <script>
+// maker = freelancer-side fee; client = client-side fee / markup (upper limits).
+// Toptal takes nothing from the freelancer but marks the client up to 50%.
 const platforms = {
-  'Upwork ~12% avg':    { fee: 0.12, name: 'Upwork' },
-  'Fiverr 20% flat':    { fee: 0.20, name: 'Fiverr' },
-  'Freelancer.com 10%': { fee: 0.10, name: 'Freelancer.com' },
-  'Toptal 6%':          { fee: 0.06, name: 'Toptal' }
+  'Upwork up to 15%':        { maker: 0.15, client: 0.08,  name: 'Upwork' },
+  'Fiverr 20% flat':         { maker: 0.20, client: 0.055, name: 'Fiverr' },
+  'Freelancer.com 10%':      { maker: 0.10, client: 0.03,  name: 'Freelancer.com' },
+  'Toptal up to 50% markup': { maker: 0.00, client: 0.50,  name: 'Toptal' }
 };
 
 // Stripe fee for Initiators: 3.3% + $4
 const STRIPE_PCT = 0.033;
 const STRIPE_FLAT = 4;
 
-let activePlatform = 'Upwork ~12% avg';
+let activePlatform = 'Upwork up to 15%';
 let calcPeriod     = 'annual';   // annual | project
 let userMode       = 'maker';    // maker | initiator
 
@@ -847,24 +853,27 @@ const widgetLabel    = document.getElementById('calcWidgetLabel');
 const tabAnnual      = document.getElementById('calcTabAnnual');
 const tabProject     = document.getElementById('calcTabProject');
 const stripeFeeNote  = document.getElementById('stripeFeeNote');
+const makerMarkupNote = document.getElementById('makerMarkupNote');
 
 function fmt(n) { return '$' + Math.round(n).toLocaleString(); }
 
 function updateCalc() {
-  const raw   = parseFloat(earningsInput.value) || 0;
-  const p     = platforms[activePlatform];
-  const fee   = raw * p.fee;
+  const raw     = parseFloat(earningsInput.value) || 0;
+  const p       = platforms[activePlatform];
   const isMaker = userMode === 'maker';
+  const feeRate = isMaker ? p.maker : p.client;
+  const fee     = raw * feeRate;
 
   // Stripe fee for initiators
   const stripeFee = isMaker ? 0 : (raw * STRIPE_PCT + STRIPE_FLAT);
 
   platformLabel.textContent = p.name;
-  platformBar.style.width   = (p.fee * 100) + '%';
+  platformBar.style.width   = (feeRate * 100) + '%';
   lyriemBar.style.width     = '100%';
 
   if (isMaker) {
-    platformLoss.textContent = '–' + fmt(fee);
+    const noFee = feeRate === 0;
+    platformLoss.textContent = noFee ? '$0 from your pay' : '–' + fmt(fee);
     lyriemKept.textContent   = fmt(raw) + ' kept';
     lossValue.textContent    = fmt(fee);
     const period = calcPeriod === 'annual' ? 'this year' : 'this project';
@@ -873,6 +882,13 @@ function updateCalc() {
     loss3Value.textContent   = calcPeriod === 'annual' ? fmt(fee * 3) : fmt(fee * 10);
     lyriemLabel.textContent  = 'Lyriem';
     stripeFeeNote.style.display = 'none';
+    if (noFee) {
+      makerMarkupNote.textContent = p.name + ' takes nothing from your pay — but marks you up to clients by up to ' +
+        Math.round(p.client * 100) + '%, pricing you out of work you’d otherwise win.';
+      makerMarkupNote.style.display = 'block';
+    } else {
+      makerMarkupNote.style.display = 'none';
+    }
   } else {
     // Initiator: show platform overhead vs Stripe-only cost
     platformLoss.textContent = '–' + fmt(fee) + ' overhead';
@@ -883,6 +899,7 @@ function updateCalc() {
     loss3Label.textContent   = calcPeriod === 'annual' ? 'Over 3 years, wasted' : 'Over 10 projects, wasted';
     loss3Value.textContent   = calcPeriod === 'annual' ? fmt(fee * 3) : fmt(fee * 10);
     lyriemLabel.textContent  = 'Lyriem*';
+    makerMarkupNote.style.display = 'none';
     stripeFeeNote.style.display = 'block';
   }
 }
