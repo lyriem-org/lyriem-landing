@@ -750,8 +750,8 @@
           <div class="summary-card"><p class="summary-label" id="lossLabel">Fees lost this year</p><p class="summary-value" id="lossValue">$7,200</p></div>
           <div class="summary-card"><p class="summary-label" id="loss3Label">Over 3 years, you lose</p><p class="summary-value" id="loss3Value">$21,600</p></div>
         </div>
-        <!-- Maker note — shown when the platform takes 0% from the freelancer (Toptal) -->
-        <p id="makerMarkupNote" style="display:none;margin-top:16px;font-size:11px;color:rgba(39,45,62,0.5);line-height:1.6"></p>
+        <!-- Always-on note: estimates use headline fees only -->
+        <p style="margin-top:14px;font-size:11px;color:rgba(39,45,62,0.5);line-height:1.6">Estimates use each platform’s headline fee and don’t include hidden extras (bid, milestone, withdrawal, or currency-conversion fees) — so real costs are typically higher.</p>
         <!-- Stripe fee note — shown for Initiators only -->
         <p id="stripeFeeNote" style="display:none;margin-top:16px;font-size:11px;color:rgba(39,45,62,0.5);line-height:1.6">
           * Lyriem charges no platform fees. Initiators pay a Stripe processing fee of 3.3% + $4 per transaction.
@@ -853,7 +853,6 @@ const widgetLabel    = document.getElementById('calcWidgetLabel');
 const tabAnnual      = document.getElementById('calcTabAnnual');
 const tabProject     = document.getElementById('calcTabProject');
 const stripeFeeNote  = document.getElementById('stripeFeeNote');
-const makerMarkupNote = document.getElementById('makerMarkupNote');
 
 function fmt(n) { return '$' + Math.round(n).toLocaleString(); }
 
@@ -882,13 +881,6 @@ function updateCalc() {
     loss3Value.textContent   = calcPeriod === 'annual' ? fmt(fee * 3) : fmt(fee * 10);
     lyriemLabel.textContent  = 'Lyriem';
     stripeFeeNote.style.display = 'none';
-    if (noFee) {
-      makerMarkupNote.textContent = p.name + ' takes nothing from your pay — but marks you up to clients by up to ' +
-        Math.round(p.client * 100) + '%, pricing you out of work you’d otherwise win.';
-      makerMarkupNote.style.display = 'block';
-    } else {
-      makerMarkupNote.style.display = 'none';
-    }
   } else {
     // Initiator: show platform overhead vs Stripe-only cost
     platformLoss.textContent = '–' + fmt(fee) + ' overhead';
@@ -899,7 +891,6 @@ function updateCalc() {
     loss3Label.textContent   = calcPeriod === 'annual' ? 'Over 3 years, wasted' : 'Over 10 projects, wasted';
     loss3Value.textContent   = calcPeriod === 'annual' ? fmt(fee * 3) : fmt(fee * 10);
     lyriemLabel.textContent  = 'Lyriem*';
-    makerMarkupNote.style.display = 'none';
     stripeFeeNote.style.display = 'block';
   }
 }
